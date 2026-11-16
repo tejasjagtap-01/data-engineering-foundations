@@ -1,0 +1,26 @@
+# Week 4: Advanced SQL for Data Engineering — Core Reference Notes
+
+Structured daily technical notes, debugging rules, and failure modes across relational querying, joins, and analytical window functions.
+
+---
+
+## 📅 Day 1 — Aggregations, Filtering & Query Structure
+
+### ⚠️ Critical Watch-Outs
+* **`COUNT()` vs. `SUM()`:** Both return numeric scalars and execute without raising errors.
+  * `COUNT(points)`: Measures non-null row presence.
+  * `SUM(points)`: Computes the aggregate sum.
+  * *Sanity check:* Always evaluate whether the output magnitude represents an unaggregated count or a genuine total.
+* **Execution Order (`WHERE` vs. `HAVING`):**
+  * `WHERE` evaluates records **before** grouping.
+  * `HAVING` filters aggregate partitions **after** grouping.
+  * Aggregates like `SUM(...)` cannot be evaluated inside a `WHERE` clause.
+
+### 💡 Engineering Rules
+* **PostgreSQL Quoting:** Columns defined with mixed case or camelCase (`"driverRef"`, `"raceId"`) require explicit double quotes; pure lowercase identifiers do not.
+* **CTE Redundancy:** If an upstream Common Table Expression already aggregates data to a unique driver grain, repeating `GROUP BY` in the outer query is redundant overhead.
+* **CTE Scope:** Avoid wrapping single-stage aggregations in CTEs. Reserve CTEs for multi-layered transforms, recursive operations, or window preparation.
+* **Targeted Practice:** When practicing explicit constraints (e.g., selecting exactly 3 columns), avoid adding superfluous projections to keep the target test clean.
+
+---
+
