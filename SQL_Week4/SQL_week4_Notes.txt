@@ -45,3 +45,25 @@ Structured daily technical notes, debugging rules, and failure modes across rela
 * **Row Count Reconciliation:** Predict and calculate expected output row counts before executing joins to verify cardinality.
 
 ---
+
+
+
+## 📅 Day 3 — Analytical Window Functions
+
+### ⚠️ Critical Watch-Outs
+* **Tie Handling (`RANK` vs. `DENSE_RANK`):**
+  * `RANK()` leaves gaps after identical values: four identical values produce `1, 1, 1, 1, 5`.
+  * `DENSE_RANK()` maintains consecutive numbering: four identical values produce `1, 1, 1, 1, 2`.
+* **Chronological Sequence vs. Sorting:** If an explicit date or timestamp is missing, order windows by a deterministic sequence key (e.g., `result_id`). Alphabetical sorting on race names is non-chronological and yields invalid trend analysis.
+* **`NTILE()` Value Splitting:** `NTILE(n)` distributes records based on sorted **row position**, not absolute values. Identical numeric values near bucket boundaries can fall into separate quantiles.
+
+### 💡 Engineering Rules
+* **Window Formulation Framework:** Before writing an `OVER()` clause, explicitly answer:
+  1. `PARTITION BY`: At what boundary does the calculation restart?
+  2. `ORDER BY`: What chronological or numeric sequence defines the evaluation?
+* **Lagging Transitions (`LAG`):**
+  * To fetch the preceding race result: `LAG(column) OVER (PARTITION BY driver_id ORDER BY result_id)`.
+  * The initial record per partition automatically returns `NULL`.
+* **Cumulative Metric Accumulation:**
+  * Running total per driver: `SUM(points) OVER (PARTITION BY driver_id ORDER BY result_id)`.
+  * Neither partitioning by points nor ordering by points produces a driver-level timeline.
