@@ -58,7 +58,7 @@ Structured daily technical notes, debugging rules, and failure modes across rela
 * **`NTILE()` Value Splitting:** `NTILE(n)` distributes records based on sorted **row position**, not absolute values. Identical numeric values near bucket boundaries can fall into separate quantiles.
 
 ### 💡 Engineering Rules
-* **Window Formulation Framework:** Before writing an `OVER()` clause, explicitly answer:
+Window Formulation Framework:** Before writing an `OVER()` clause, explicitly answer:
   1. `PARTITION BY`: At what boundary does the calculation restart?
   2. `ORDER BY`: What chronological or numeric sequence defines the evaluation?
 * **Lagging Transitions (`LAG`):**
@@ -67,3 +67,24 @@ Structured daily technical notes, debugging rules, and failure modes across rela
 * **Cumulative Metric Accumulation:**
   * Running total per driver: `SUM(points) OVER (PARTITION BY driver_id ORDER BY result_id)`.
   * Neither partitioning by points nor ordering by points produces a driver-level timeline.
+---
+
+
+
+
+
+📅 Day 4 learnings CTE (Common Table Expression)
+
+1. “One row per ___” means GROUP BY. “Keep every row and add a column” means a window function.
+2. For “above the average of the totals”, collapse to totals first, then compare against an aggregate of those totals.
+3. ROW_NUMBER() needs an ORDER BY plus a tie-breaker. Top 1 per group is ROW_NUMBER in a CTE, then WHERE rn = 1.
+4. A grand total in a window is SUM(x) OVER ().
+5. Multiply by 100.0 before dividing, because Postgres divides integers as integers.
+6. Aggregate the many-side table before you join it, then check that every race still totals 80.
+7. Build a CTE one layer at a time, and run the first layer on its own before adding the next.
+
+The logic behind all of it
+- View: a saved query that stores no data. Every SELECT runs it against the tables as they are now.
+- CTAS table: a copy of the data at one moment. It never changes unless you rebuild it.
+- Temp table: a copy that exists only for your session, so you can reuse it across several statements.
+- Materialized view: a copy plus the remembered query, so one REFRESH rebuilds it.
