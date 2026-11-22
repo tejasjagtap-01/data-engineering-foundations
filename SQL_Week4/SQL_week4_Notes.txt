@@ -36,13 +36,13 @@ Structured daily technical notes, debugging rules, and failure modes across rela
   * Joining a one-to-many relationship without prior reduction duplicates rows from the one-side, inflating downstream calculations (e.g., Bahrain race points inflating from 80 to 123 due to lap-time fan-out).
   * *Fix:* Pre-aggregate the many-side table to the target grain inside a CTE before performing the join.
 
-### 💡 Engineering Rules
-* **Join Selection Matrix:**
-  * `INNER JOIN`: Preserves strictly matching keys across both tables.
-  * `LEFT JOIN`: Preserves the complete left-side baseline regardless of right-side presence.
-  * `FULL OUTER JOIN`: Preserves the complete union of matched and unmatched rows from both tables.
-* **Self-Joins:** Join the same physical relation against itself using distinct aliases (`r1`, `r2`) to compare adjacent records or evaluate hierarchies sharing a common key.
-* **Row Count Reconciliation:** Predict and calculate expected output row counts before executing joins to verify cardinality.
+💡 Engineering Rules
+Join Selection Matrix:
+   `INNER JOIN`: Preserves strictly matching keys across both tables.
+   `LEFT JOIN`: Preserves the complete left-side baseline regardless of right-side presence.
+   `FULL OUTER JOIN`: Preserves the complete union of matched and unmatched rows from both tables.
+Self-Joins: Join the same physical relation against itself using distinct aliases (`r1`, `r2`) to compare adjacent records or evaluate hierarchies sharing a common key.
+Row Count Reconciliation:** Predict and calculate expected output row counts before executing joins to verify cardinality.
 
 ---
 
