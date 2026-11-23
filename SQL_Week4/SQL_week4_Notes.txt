@@ -24,17 +24,17 @@ Structured daily technical notes, debugging rules, and failure modes across rela
 
 ---
 
-## 📅 Day 2 — Relational Joins & Data Integrity
+📅 Day 2 — Relational Joins & Data Integrity
 
-### ⚠️ Critical Watch-Outs
-* **Silent Dropped Records:** An `INNER JOIN` silently excludes unmatched rows (e.g., records with orphaned or placeholder IDs disappear unnoticed).
-* **Anti-Join Filtering Boundary:**
-  * To isolate unmatched records, use a `LEFT JOIN` combined with `WHERE right_table.key IS NULL`.
-  * Always test for `NULL` on a primary/join column belonging to the **right-hand** table (`pd.driver_id IS NULL`), never the left-hand table (`pr.driver_id IS NULL`).
-* **Hardcoded vs. Dynamic Detection:** Filtering via `= 99` only catches known bad keys. Filtering via `IS NULL` uncovers unknown foreign-key mismatches and orphaned entries.
-* **Join Fan-Out & Aggregate Inflation:**
-  * Joining a one-to-many relationship without prior reduction duplicates rows from the one-side, inflating downstream calculations (e.g., Bahrain race points inflating from 80 to 123 due to lap-time fan-out).
-  * *Fix:* Pre-aggregate the many-side table to the target grain inside a CTE before performing the join.
+⚠️ Critical Watch-Outs
+Silent Dropped Records:** An `INNER JOIN` silently excludes unmatched rows (e.g., records with orphaned or placeholder IDs disappear unnoticed).
+Anti-Join Filtering Boundary:**
+   To isolate unmatched records, use a `LEFT JOIN` combined with `WHERE right_table.key IS NULL`.
+   Always test for `NULL` on a primary/join column belonging to the **right-hand** table (`pd.driver_id IS NULL`), never the left-hand table (`pr.driver_id IS NULL`).
+Hardcoded vs. Dynamic Detection:** Filtering via `= 99` only catches known bad keys. Filtering via `IS NULL` uncovers unknown foreign-key mismatches and orphaned entries.
+  Join Fan-Out & Aggregate Inflation:**
+  Joining a one-to-many relationship without prior reduction duplicates rows from the one-side, inflating downstream calculations (e.g., Bahrain race points inflating from 80 to 123 due to lap-time fan-out).
+  Fix: Pre-aggregate the many-side table to the target grain inside a CTE before performing the join.
 
 💡 Engineering Rules
 Join Selection Matrix:
