@@ -6,7 +6,7 @@ Structured daily technical notes, debugging rules, and failure modes across rela
 
 ## 📅 Day 1 — Aggregations, Filtering & Query Structure
 
-### ⚠️ Critical Watch-Outs
+⚠️ Critical Watch-Outs
 * **`COUNT()` vs. `SUM()`:** Both return numeric scalars and execute without raising errors.
   * `COUNT(points)`: Measures non-null row presence.
   * `SUM(points)`: Computes the aggregate sum.
