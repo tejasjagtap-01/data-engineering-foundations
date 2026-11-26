@@ -4,17 +4,17 @@ Structured daily technical notes, debugging rules, and failure modes across rela
 
 ---
 
-## 📅 Day 1 — Aggregations, Filtering & Query Structure
+📅 Day 1 — Aggregations, Filtering & Query Structure
 
 ⚠️ Critical Watch-Outs
-* **`COUNT()` vs. `SUM()`:** Both return numeric scalars and execute without raising errors.
-  * `COUNT(points)`: Measures non-null row presence.
-  * `SUM(points)`: Computes the aggregate sum.
-  * *Sanity check:* Always evaluate whether the output magnitude represents an unaggregated count or a genuine total.
-* **Execution Order (`WHERE` vs. `HAVING`):**
-  * `WHERE` evaluates records **before** grouping.
-  * `HAVING` filters aggregate partitions **after** grouping.
-  * Aggregates like `SUM(...)` cannot be evaluated inside a `WHERE` clause.
+`COUNT()` vs. `SUM()`: Both return numeric scalars and execute without raising errors.
+   `COUNT(points)`: Measures non-null row presence.
+   `SUM(points)`: Computes the aggregate sum.
+   Sanity check:* Always evaluate whether the output magnitude represents an unaggregated count or a genuine total.
+Execution Order (`WHERE` vs. `HAVING`):
+  `WHERE` evaluates records before grouping.
+  `HAVING` filters aggregate partitions after grouping.
+  Aggregates like `SUM(...)` cannot be evaluated inside a `WHERE` clause.
 
 💡 Engineering Rules
 PostgreSQL Quoting: Columns defined with mixed case or camelCase (`"driverRef"`, `"raceId"`) require explicit double quotes; pure lowercase identifiers do not.
